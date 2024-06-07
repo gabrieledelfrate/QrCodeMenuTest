@@ -49,7 +49,12 @@
                     <p class="card-text"><strong>Vegan:</strong> @(item.IsVegan ? "Yes" : "No")</p>
                     <p class="card-text"><strong>Gluten Free:</strong> @(item.IsGlutenFree ? "Yes" : "No")</p>
                     <p class="card-text"><strong>Sugar Free:</strong> @(item.IsSugarFree ? "Yes" : "No")</p>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-id="@item.ProductId">Edit</button>
+                    @Html.ActionLink("Edit", "EditPartial", "Product", new { id = item.ProductId },
+                             new
+                             {
+                                 @class = "btn btn-primary edit-link",
+                                 data_product_id = item.ProductId
+                             })
                 </div>
             </div>
         </div>
@@ -83,13 +88,17 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
-    <script>
+<script>
         $(document).ready(function() {
-            $('#editModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var productId = button.data('id'); // Extract info from data-* attributes
-                var modal = $(this);
-                modal.find('.modal-body #editProductForm').load('@Url.Action("EditPartial", "Product")' + '/' + productId);
+            $('.edit-link').on('click', function (event) {
+                event.preventDefault(); // Impedisci il comportamento predefinito del link
+
+                var productId = $(this).data('product-id');
+                var url = '@Url.Action("EditPartial", "Product")/' + productId;
+
+                $('#editProductForm').load(url, function () {
+                    $('#editModal').modal('show'); // Mostra la modale dopo aver caricato il contenuto
+                });
             });
 
             $('#saveChangesButton').on('click', function() {
@@ -105,7 +114,7 @@
                 });
             });
         });
-    </script>
+</script>
 }
 
 }

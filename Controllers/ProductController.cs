@@ -30,8 +30,37 @@ namespace QrCodeMenuTest.Controllers
             return View(products.ToList());
         }
 
-        // GET: Product/EditPartial/5 (for modal)
-        public ActionResult EditPartial(int? id)
+        // GET: Product/EditPartial/5 (per la modale)
+        [HttpGet]
+        public ActionResult EditPartial(int id) //rimo il ? da int? id e il controllo di id == null
+        {
+            Product product = db.Products.Find(id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "Name", product.ProductCategoryId);
+            return PartialView("_EditPartial", product);
+        }
+
+        // POST: Product/EditPartial
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPartial([Bind(Include = "ProductId,Name,Description,Price,IsVegetarian,IsVegan,IsGlutenFree,IsSugarFree,ProductCategoryId")] Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(product).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { success = true }); // Risposta JSON in caso di successo
+            }
+
+            // Risposta JSON con errori di validazione in caso di fallimento
+            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors) });
+        }
+
+        // GET: Product/Details/5
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -42,23 +71,7 @@ namespace QrCodeMenuTest.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "Name", product.ProductCategoryId);
-            return PartialView("_EditPartial", product);
-        }
-
-        // POST: Product/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPartial([Bind(Include = "ProductId,Name,Description,Price,IsVegetarian,IsVegan,IsGlutenFree,IsSugarFree,ProductCategoryId")] Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "Name", product.ProductCategoryId);
-            return PartialView("_EditPartial", product);
+            return View(product);
         }
 
         // GET: Product/Create
