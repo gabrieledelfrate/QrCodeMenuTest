@@ -1,0 +1,56 @@
+﻿@model QrCodeMenuTest.Models.Product
+
+@using (Html.BeginForm("EditPartial", "Product", FormMethod.Post, new { id = "editForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.ProductId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductCategoryId, "Category", htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownList("ProductCategoryId", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ProductCategoryId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsVegetarian, htmlAttributes: new { @class = "control-label" })
+        @Html.CheckBoxFor(model => model.IsVegetarian)
+        @Html.ValidationMessageFor(model => model.IsVegetarian, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsVegan, htmlAttributes: new { @class = "control-label" })
+        @Html.CheckBoxFor(model => model.IsVegan)
+        @Html.ValidationMessageFor(model => model.IsVegan, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsGlutenFree, htmlAttributes: new { @class = "control-label" })
+        @Html.CheckBoxFor(model => model.IsGlutenFree)
+        @Html.ValidationMessageFor(model => model.IsGlutenFree, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsSugarFree, htmlAttributes: new { @class = "control-label" })
+        @Html.CheckBoxFor(model => model.IsSugarFree)
+        @Html.ValidationMessageFor(model => model.IsSugarFree, "", new { @class = "text-danger" })
+    </div>
+}

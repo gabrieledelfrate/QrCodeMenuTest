@@ -1,0 +1,111 @@
+﻿@model IEnumerable<QrCodeMenuTest.Models.Product>
+@using QrCodeMenuTest.Models
+
+@{
+    ViewBag.Title = "Product Index";
+}
+
+<h2>Product Index</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="get" action="@Url.Action("Index")" class="form-inline">
+            <div class="form-group">
+                <label for="categoryId">Category</label>
+                @Html.DropDownList("categoryId", (SelectList)ViewBag.ProductCategories, "All", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label for="isVegetarian">Vegetarian</label>
+                <input type="checkbox" id="isVegetarian" name="isVegetarian" value="true" @(Request.QueryString["isVegetarian"] == "true" ? "checked" : "") />
+            </div>
+            <div class="form-group">
+                <label for="isVegan">Vegan</label>
+                <input type="checkbox" id="isVegan" name="isVegan" value="true" @(Request.QueryString["isVegan"] == "true" ? "checked" : "") />
+            </div>
+            <div class="form-group">
+                <label for="isGlutenFree">Gluten Free</label>
+                <input type="checkbox" id="isGlutenFree" name="isGlutenFree" value="true" @(Request.QueryString["isGlutenFree"] == "true" ? "checked" : "") />
+            </div>
+            <div class="form-group">
+                <label for="isSugarFree">Sugar Free</label>
+                <input type="checkbox" id="isSugarFree" name="isSugarFree" value="true" @(Request.QueryString["isSugarFree"] == "true" ? "checked" : "") />
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">@item.Description</p>
+                    <p class="card-text"><strong>Price:</strong> @item.Price</p>
+                    <p class="card-text"><strong>Category:</strong> @item.ProductCategory.Name</p>
+                    <p class="card-text"><strong>Vegetarian:</strong> @(item.IsVegetarian ? "Yes" : "No")</p>
+                    <p class="card-text"><strong>Vegan:</strong> @(item.IsVegan ? "Yes" : "No")</p>
+                    <p class="card-text"><strong>Gluten Free:</strong> @(item.IsGlutenFree ? "Yes" : "No")</p>
+                    <p class="card-text"><strong>Sugar Free:</strong> @(item.IsSugarFree ? "Yes" : "No")</p>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-id="@item.ProductId">Edit</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="editProductForm">
+                    <!-- Form content will be loaded here via AJAX -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveChangesButton">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function() {
+            $('#editModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var productId = button.data('id'); // Extract info from data-* attributes
+                var modal = $(this);
+                modal.find('.modal-body #editProductForm').load('@Url.Action("EditPartial", "Product")' + '/' + productId);
+            });
+
+            $('#saveChangesButton').on('click', function() {
+                var form = $('#editProductForm form');
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        $('#editModal').modal('hide');
+                        location.reload(); // Reload the page to see the changes
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+}
